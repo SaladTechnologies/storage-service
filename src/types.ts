@@ -1,3 +1,5 @@
+import { IRequest } from "itty-router";
+
 export interface Env {
   BUCKET: R2Bucket;
   SALAD_USERNAME: string;
@@ -16,3 +18,9 @@ export interface ApiKeyValidationResponse {
   organization_id: string;
   organization_name: string;
 }
+
+export type CFArgs = [Env, ExecutionContext];
+
+export type AuthedRequest = {
+  orgId: string;
+} & IRequest;

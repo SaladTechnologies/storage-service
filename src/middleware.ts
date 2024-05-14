@@ -41,6 +41,8 @@ export async function validateSaladApiKey(
   return body;
 }
 
+export async function validateSaladJWT(env: Env, jwt: string) {}
+
 export async function authRequest(
   request: Request & { params: { organization_name: string } },
   env: Env

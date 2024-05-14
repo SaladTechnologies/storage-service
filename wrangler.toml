@@ -8,6 +8,7 @@ mode = "smart"
 
 [vars]
 AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
+JWKS_URL = "https://matrix-rest-api.salad.com/.well-known/workload-jwks.json"
 REQUIRE_PAYMENT_METHOD = "true"
 
 [[r2_buckets]]
