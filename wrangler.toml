@@ -1,0 +1,15 @@
+name = "storage-service"
+main = "src/index.ts"
+compatibility_date = "2024-02-08"
+compatibility_flags = ["nodejs_compat"]
+
+[placement]
+mode = "smart"
+
+[vars]
+AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
+REQUIRE_PAYMENT_METHOD = "true"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "user-file-storage"
