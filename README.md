@@ -1,4 +1,4 @@
-# Salad Simple Storage Service (S4)
+# 🥗 Salad Simple Storage Service (S4)
 
 This is a simple HTTP service to allow Salad customers to temporarily upload assets for use in other salad services. Examples include uploading images for stable diffusion training or inference, audio clips for transcription, etc.
 
