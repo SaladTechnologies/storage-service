@@ -26,10 +26,6 @@ export type AuthedRequest = {
   orgId: string;
 } & IRequest;
 
-export interface JWKS {
-  keys: JWK[];
-}
-
 export interface SaladJWTPayload extends JWTPayload {
   salad_machine_id: string;
   salad_organization_id: string;

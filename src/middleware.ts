@@ -2,11 +2,11 @@ import {
   Env,
   ApiKeyValidationResponse,
   AuthedRequest,
-  JWKS,
   SaladJWTPayload,
 } from "./types";
 import * as jose from "jose";
 import { error } from "itty-router";
+import { Buffer } from "node:buffer";
 
 export function paymentRequired(env: Env): boolean {
   return env.REQUIRE_PAYMENT_METHOD.toLowerCase() === "true";
