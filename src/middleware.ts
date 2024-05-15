@@ -20,6 +20,17 @@ export async function validateSaladApiKey(
   if (!apiKey || !orgName) {
     throw new Error("API Key and Organization Name Required");
   }
+  const cacheKey = `${apiKey}:${orgName}`;
+  const cacheTtl = parseInt(env.TOKEN_CACHE_TTL);
+  const cached = await env.TOKEN_CACHE.get<ApiKeyValidationResponse>(cacheKey, {
+    type: "json",
+    cacheTtl,
+  });
+
+  if (cached) {
+    return cached;
+  }
+
   const response = await fetch(env.AUTH_URL, {
     method: "POST",
     headers: {
@@ -50,6 +61,10 @@ export async function validateSaladApiKey(
     throw new Error("Payment Method Required");
   }
 
+  await env.TOKEN_CACHE.put(cacheKey, JSON.stringify(body), {
+    expirationTtl: cacheTtl,
+  });
+
   return body;
 }
 
@@ -57,9 +72,21 @@ export async function validateSaladJWT(
   env: Env,
   token: string
 ): Promise<SaladJWTPayload> {
+  const cacheTtl = parseInt(env.TOKEN_CACHE_TTL);
+  const cached = await env.TOKEN_CACHE.get<SaladJWTPayload>(token, {
+    type: "json",
+    cacheTtl,
+  });
+  if (cached) {
+    return cached;
+  }
   const jwks = jose.createRemoteJWKSet(new URL(env.JWKS_URL));
 
   const { payload } = await jose.jwtVerify(token, jwks);
+
+  await env.TOKEN_CACHE.put(token, JSON.stringify(payload), {
+    expirationTtl: cacheTtl,
+  });
 
   return payload as SaladJWTPayload;
 }

@@ -5,11 +5,13 @@ export interface Env {
   SALAD_USERNAME: string;
   SALAD_PASSWORD: string;
   AUTH_URL: string;
+  JWKS_URL: string;
   REQUIRE_PAYMENT_METHOD: string;
+  TOKEN_CACHE: KVNamespace;
+  TOKEN_CACHE_TTL: string;
+
   TEST_API_KEY?: string;
   TEST_ORG?: string;
-  JWKS_URL: string;
-  orgId?: string;
 }
 
 export interface ApiKeyValidationResponse {
