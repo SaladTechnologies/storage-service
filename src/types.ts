@@ -9,6 +9,7 @@ export interface Env {
   REQUIRE_PAYMENT_METHOD: string;
   TOKEN_CACHE: KVNamespace;
   TOKEN_CACHE_TTL: string;
+  JWKS_CACHE_TTL: string;
 
   TEST_API_KEY?: string;
   TEST_ORG?: string;

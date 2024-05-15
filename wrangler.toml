@@ -11,6 +11,7 @@ AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
 JWKS_URL = "https://matrix-rest-api.salad.com/.well-known/workload-jwks.json"
 REQUIRE_PAYMENT_METHOD = "true"
 TOKEN_CACHE_TTL = "60"
+JWKS_CACHE_TTL = "600"
 
 [[r2_buckets]]
 binding = "BUCKET"

@@ -68,25 +68,39 @@ export async function validateSaladApiKey(
   return body;
 }
 
-export async function validateSaladJWT(
-  env: Env,
-  token: string
-): Promise<SaladJWTPayload> {
-  const cacheTtl = parseInt(env.TOKEN_CACHE_TTL);
-  const cached = await env.TOKEN_CACHE.get<SaladJWTPayload>(token, {
+export async function getJWKs(env: Env): Promise<jose.JSONWebKeySet> {
+  const cacheKey = "jwks";
+  const cacheTtl = parseInt(env.JWKS_CACHE_TTL);
+  const cached = await env.TOKEN_CACHE.get<jose.JSONWebKeySet>(cacheKey, {
     type: "json",
     cacheTtl,
   });
   if (cached) {
     return cached;
   }
-  const jwks = jose.createRemoteJWKSet(new URL(env.JWKS_URL));
 
-  const { payload } = await jose.jwtVerify(token, jwks);
+  const response = await fetch(env.JWKS_URL);
+  if (!response.ok) {
+    throw new Error("Error Accessing JWKS");
+  }
 
-  await env.TOKEN_CACHE.put(token, JSON.stringify(payload), {
+  const body = (await response.json()) as jose.JSONWebKeySet;
+
+  await env.TOKEN_CACHE.put(cacheKey, JSON.stringify(body), {
     expirationTtl: cacheTtl,
   });
+
+  return body;
+}
+
+export async function validateSaladJWT(
+  env: Env,
+  token: string
+): Promise<SaladJWTPayload> {
+  const jwksRaw = await getJWKs(env);
+  const jwks = jose.createLocalJWKSet(jwksRaw);
+
+  const { payload } = await jose.jwtVerify(token, jwks);
 
   return payload as SaladJWTPayload;
 }
