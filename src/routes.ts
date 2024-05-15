@@ -25,18 +25,14 @@ export const uploadFile: RequestHandler<AuthedRequest, CFArgs> = async (
   const formData = request.content as FormData;
 
   const file = formData.get("file");
-  const extension = formData.get("extension");
+  const filename = request.filename;
   const mimeType = formData.get("mimeType");
 
-  if (!file) {
+  if (!file || !filename) {
     return error(400, "No file uploaded");
   }
 
-  let fileId = crypto.randomUUID();
-  if (extension) {
-    fileId += `.${extension}`;
-  }
-  let key = `${request.orgId}/${fileId}`;
+  let key = `${request.orgId}/${filename}`;
 
   let opts: R2PutOptions = !!mimeType
     ? {
@@ -49,9 +45,78 @@ export const uploadFile: RequestHandler<AuthedRequest, CFArgs> = async (
   await env.BUCKET.put(key, file, opts);
 
   const url = new URL(
-    `/organizations/${request.params.organization_name}/files/${fileId}`,
+    `/organizations/${request.organization_name}/files/${filename}`,
     getBaseUrl(request)
   );
 
   return { url: url.toString() };
+};
+
+export const downloadFile: RequestHandler<AuthedRequest, CFArgs> = async (
+  request,
+  env,
+  ctx
+) => {
+  const filename = request.filename;
+  const key = `${request.orgId}/${filename}`;
+
+  const file = await env.BUCKET.get(key);
+
+  if (!file) {
+    return new Response("File not found", { status: 404 });
+  }
+
+  const mimeType = file.httpMetadata?.contentType || "application/octet-stream";
+
+  return new Response(file.body, {
+    headers: {
+      "content-type": mimeType,
+    },
+  });
+};
+
+export const deleteFile: RequestHandler<AuthedRequest, CFArgs> = async (
+  request,
+  env,
+  ctx
+) => {
+  const filename = request.filename;
+  const key = `${request.orgId}/${filename}`;
+
+  try {
+    await env.BUCKET.delete(key);
+  } catch (e: any) {
+    console.error(e);
+    return new Response(e.message, { status: 500 });
+  }
+
+  return new Response(null, { status: 204 });
+};
+
+export const listFiles: RequestHandler<AuthedRequest, CFArgs> = async (
+  request,
+  env,
+  ctx
+) => {
+  const prefix = `${request.orgId}/`;
+
+  const { objects } = await env.BUCKET.list({
+    prefix,
+    include: ["httpMetadata"],
+  });
+
+  const files = objects.map((obj) => {
+    const filename = obj.key.replace(prefix, "");
+    return {
+      url: new URL(
+        `/organizations/${request.organization_name}/files/${filename}`,
+        getBaseUrl(request)
+      ).toString(),
+      mimeType: obj.httpMetadata?.contentType || "application/octet-stream",
+      size: obj.size,
+      uploaded: obj.uploaded,
+      etag: obj.etag,
+    };
+  });
+  return { files };
 };
