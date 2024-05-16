@@ -8,10 +8,6 @@ import * as jose from "jose";
 import { error } from "itty-router";
 import { Buffer } from "node:buffer";
 
-export function paymentRequired(env: Env): boolean {
-  return env.REQUIRE_PAYMENT_METHOD.toLowerCase() === "true";
-}
-
 export async function validateSaladApiKey(
   env: Env,
   apiKey: string,
@@ -57,7 +53,7 @@ export async function validateSaladApiKey(
     throw new Error("Invalid Organization Name");
   }
 
-  if (paymentRequired(env) && !body.is_payment_method_attached) {
+  if (body.is_payment_method_required && !body.is_payment_method_attached) {
     throw new Error("Payment Method Required");
   }
 

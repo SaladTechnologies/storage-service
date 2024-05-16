@@ -1,6 +1,6 @@
 import { expect, it, describe } from "vitest";
 import { env } from "cloudflare:test";
-import { validateSaladApiKey, paymentRequired } from "./middleware";
+import { validateSaladApiKey } from "./middleware";
 import { Env } from "./types";
 declare module "cloudflare:test" {
   interface ProvidedEnv {
@@ -18,12 +18,14 @@ describe("validateSaladApiKey", () => {
       env.TEST_API_KEY!,
       env.TEST_ORG!
     );
-    expect(payload.is_api_key_valid).toBe(true);
-    expect(payload.is_organization_name_valid).toBe(true);
-
-    if (paymentRequired(env)) {
-      expect(payload.is_payment_method_attached).toBe(true);
-    }
+    expect(payload).toMatchObject({
+      is_api_key_valid: true,
+      is_organization_name_valid: true,
+      is_payment_method_attached: true,
+      is_payment_method_required: false,
+      organization_id: env.TEST_ORG_ID!,
+      organization_name: env.TEST_ORG!,
+    });
   });
 
   it("Throws an error if the api key is invalid", async () => {
