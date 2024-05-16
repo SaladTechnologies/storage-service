@@ -4,6 +4,12 @@ This is a simple HTTP service to allow Salad customers to temporarily upload ass
 
 ## Endpoints
 
+### Authorization
+
+Requests to the S4 service must include either:
+- An `Salad-Api-Key` header with a valid Salad API key.
+- An `Authorization` header with a valid Salad JWT (issued by the instance metadata service) as a bearer token.
+
 ### Upload a File
 
 #### PUT `/organizations/:organization_name/files/:filename`
