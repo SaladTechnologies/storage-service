@@ -38,7 +38,7 @@ Uploads a file to the specified organization.
 **Example Request:**
 ```bash
 curl  -X PUT \
-  'https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --form 'mimeType="text/toml"' \
   --form 'file=@/home/shawn/code/SaladTechnologies/storage-service/wrangler.toml'
@@ -47,7 +47,7 @@ curl  -X PUT \
 **Example Response:**
 ```json
 {
-  "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml"
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml"
 }
 ```
 
@@ -57,7 +57,7 @@ When uploading a file, you can optionally request to sign the url, which will al
 
 ```bash
 curl  -X PUT \
-  'https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --form 'mimeType="text/toml"' \
   --form 'file=@/home/shawn/code/SaladTechnologies/storage-service/wrangler.toml' \
@@ -68,7 +68,7 @@ curl  -X PUT \
 **Example Response, Signed URL**
 ```json
 {
-  "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
 }
 ```
 
@@ -89,7 +89,7 @@ Downloads a file from the specified organization.
 **Example Request:**
 ```bash
 curl -X GET \
-  'https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --output wrangler.toml
 ```
@@ -109,7 +109,7 @@ Deletes a file from the specified organization.
 **Example Request:**
 ```bash
 curl -X DELETE \
-  'https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
   --header 'Salad-Api-Key: YOURAPIKEY'
 ```
 
@@ -128,7 +128,7 @@ Lists all files within the specified organization.
 **Example Request:**
 ```bash
 curl -X GET \
-  'https://upload.salad.com/organizations/salad-benchmarking/files' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files' \
   --header 'Salad-Api-Key: YOURAPIKEY'
 ```
 
@@ -137,7 +137,7 @@ curl -X GET \
 {
   "files": [
     {
-      "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml",
+      "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml",
       "size": 1024,
       "mimeType": "text/toml",
       "uploaded": "2021-09-01T12:00:00Z",
@@ -160,7 +160,7 @@ Creates a signed URL for a file in the specified organization.
 **Example Request:**
 ```bash
 curl -X POST \
-  'https://upload.salad.com/organizations/salad-benchmarking/file_tokens/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/file_tokens/wrangler.toml' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --data '{"method": "GET", "expires": 86400}'
 ```
@@ -168,6 +168,6 @@ curl -X POST \
 **Example Response:**
 ```json
 {
-  "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=974360ea-63f7-4db3-9692-72ca5dbae615"
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=974360ea-63f7-4db3-9692-72ca5dbae615"
 }
 ```
