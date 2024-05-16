@@ -8,7 +8,7 @@ This is a simple HTTP service to allow Salad customers to temporarily upload ass
 
 Requests to the S4 service must include either:
 - An `Salad-Api-Key` header with a valid Salad API key.
-- An `Authorization` header with a valid Salad JWT (issued by the instance metadata service) as a bearer token.
+- An `Authorization` header with a valid Salad JWT (issued by the [instance metadata service](https://github.com/SaladTechnologies/saladcloud-job-queue-worker-sdk/blob/main/docs/retrieving_token.md)) as a bearer token.
 
 ### Upload a File
 
