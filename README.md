@@ -2,6 +2,21 @@
 
 This is a simple HTTP service to allow Salad customers to temporarily upload assets for use in other salad services. Examples include uploading images for stable diffusion training or inference, audio clips for transcription, etc.
 
+- [🥗 Salad Simple Storage Service (S4)](#-salad-simple-storage-service-s4)
+  - [Endpoints](#endpoints)
+    - [Authorization](#authorization)
+    - [Upload a File](#upload-a-file)
+      - [PUT `/organizations/:organization_name/files/:filename`](#put-organizationsorganization_namefilesfilename)
+    - [Download a File](#download-a-file)
+      - [GET `/organizations/:organization_name/files/:filename`](#get-organizationsorganization_namefilesfilename)
+    - [Delete a File](#delete-a-file)
+      - [DELETE `/organizations/:organization_name/files/:filename`](#delete-organizationsorganization_namefilesfilename)
+    - [List Files](#list-files)
+      - [GET `/organizations/:organization_name/files`](#get-organizationsorganization_namefiles)
+    - [Get A Signed Url for a File](#get-a-signed-url-for-a-file)
+      - [POST `/organizations/:organization_name/file_tokens/:filename`](#post-organizationsorganization_namefile_tokensfilename)
+
+
 ## Endpoints
 
 ### Authorization
