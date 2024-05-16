@@ -3,6 +3,7 @@ import {
   ApiKeyValidationResponse,
   AuthedRequest,
   SaladJWTPayload,
+  AccessTokenData,
 } from "./types";
 import * as jose from "jose";
 import { error } from "itty-router";
@@ -105,12 +106,36 @@ export async function authRequest(request: AuthedRequest, env: Env) {
   const apiKey = request.headers.get("Salad-Api-Key");
   const authHeader = request.headers.get("Authorization");
   const orgName = request.organization_name;
+  const filename = request.filename;
+  const accessToken = request.query.token;
+  const method = request.method;
 
-  if (!apiKey && !authHeader) {
-    return error(401, "API Key or JWT Required");
+  if (accessToken && Array.isArray(accessToken)) {
+    return error(400, "Must Provide Only One Token");
   }
 
-  if (apiKey) {
+  if (!apiKey && !authHeader && !accessToken) {
+    return error(401, "API Key, JWT, or Access Token Required");
+  }
+
+  if (accessToken) {
+    const cached = await env.TOKEN_CACHE.get<AccessTokenData>(accessToken, {
+      type: "json",
+    });
+    if (!cached) {
+      return error(401, "Invalid Access Token");
+    }
+    if (cached.orgName !== orgName) {
+      return error(401, "Access Denied");
+    }
+    if (cached.filename !== filename) {
+      return error(401, "Access Denied");
+    }
+    if (cached.method !== method) {
+      return error(401, "Invalid Method");
+    }
+    request.orgId = cached.orgId;
+  } else if (apiKey) {
     try {
       const payload = await validateSaladApiKey(env, apiKey, orgName);
       request.orgId = payload.organization_id;

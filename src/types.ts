@@ -10,6 +10,9 @@ export interface Env {
   TOKEN_CACHE: KVNamespace;
   TOKEN_CACHE_TTL: string;
   JWKS_CACHE_TTL: string;
+  MINIMUM_SIGNATURE_DURATION_SECONDS: string;
+  MAXIMUM_SIGNATURE_DURATION_SECONDS: string;
+  DEFAULT_SIGNATURE_DURATION_SECONDS: string;
 
   TEST_API_KEY?: string;
   TEST_ORG?: string;
@@ -37,4 +40,11 @@ export interface SaladJWTPayload extends JWTPayload {
   salad_organization_name: string;
   salad_workload_id: string;
   salad_workload_name: string;
+}
+
+export interface AccessTokenData {
+  orgId: string;
+  orgName: string;
+  filename: string;
+  method: string;
 }

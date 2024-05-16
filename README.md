@@ -36,6 +36,28 @@ curl  -X PUT \
 }
 ```
 
+**Example Request, Creating Signed URL**
+
+When uploading a file, you can optionally request to sign the url, which will allow you to use the returned url to fetch the file without needing to include the `Salad-Api-Key` header.
+
+```bash
+curl  -X PUT \
+  'https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  --header 'Salad-Api-Key: YOURAPIKEY' \
+  --form 'mimeType="text/toml"' \
+  --form 'file=@/home/shawn/code/SaladTechnologies/storage-service/wrangler.toml' \
+  --form 'sign=true' \
+  --signatureExp '86400'
+```
+
+**Example Response, Signed URL**
+```json
+{
+  "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
+}
+```
+
+
 ---
 
 ### Download a File
@@ -107,5 +129,30 @@ curl -X GET \
       "etag": "1234567890"
     }
   ]
+}
+```
+
+### Get A Signed Url for a File
+
+#### POST `/organizations/:organization_name/file_tokens/:filename`
+
+Creates a signed URL for a file in the specified organization.
+
+**Request Parameters:**
+- `organization_name` (string): The name of the organization.
+- `filename` (string): The name of the file to create a signed URL for.
+
+**Example Request:**
+```bash
+curl -X POST \
+  'https://upload.salad.com/organizations/salad-benchmarking/file_tokens/wrangler.toml' \
+  --header 'Salad-Api-Key: YOURAPIKEY' \
+  --data '{"method": "GET", "expires": 86400}'
+```
+
+**Example Response:**
+```json
+{
+  "url": "https://upload.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=974360ea-63f7-4db3-9692-72ca5dbae615"
 }
 ```
