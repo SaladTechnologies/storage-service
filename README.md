@@ -6,15 +6,15 @@ This is a simple HTTP service to allow Salad customers to temporarily upload ass
   - [Endpoints](#endpoints)
     - [Authorization](#authorization)
     - [Upload a File](#upload-a-file)
-      - [PUT `/organizations/:organization_name/files/:filename`](#put-organizationsorganization_namefilesfilename)
+      - [PUT `/organizations/:organization_name/files/:filename+`](#put-organizationsorganization_namefilesfilename)
     - [Download a File](#download-a-file)
-      - [GET `/organizations/:organization_name/files/:filename`](#get-organizationsorganization_namefilesfilename)
+      - [GET `/organizations/:organization_name/files/:filename+`](#get-organizationsorganization_namefilesfilename)
     - [Delete a File](#delete-a-file)
-      - [DELETE `/organizations/:organization_name/files/:filename`](#delete-organizationsorganization_namefilesfilename)
+      - [DELETE `/organizations/:organization_name/files/:filename+`](#delete-organizationsorganization_namefilesfilename)
     - [List Files](#list-files)
       - [GET `/organizations/:organization_name/files`](#get-organizationsorganization_namefiles)
     - [Get A Signed Url for a File](#get-a-signed-url-for-a-file)
-      - [POST `/organizations/:organization_name/file_tokens/:filename`](#post-organizationsorganization_namefile_tokensfilename)
+      - [POST `/organizations/:organization_name/file_tokens/:filename+`](#post-organizationsorganization_namefile_tokensfilename)
 
 
 ## Endpoints
@@ -27,27 +27,27 @@ Requests to the S4 service must include either:
 
 ### Upload a File
 
-#### PUT `/organizations/:organization_name/files/:filename`
+#### PUT `/organizations/:organization_name/files/:filename+`
 
 Uploads a file to the specified organization.
 
 **Request Parameters:**
 - `organization_name` (string): The name of the organization.
-- `filename` (string): The name of the file to upload.
+- `filename` (string): The name of the file to upload. This can be a path, and the file will be stored in a directory structure based on the path. e.g. `path/to/my/file.tar.gz` will be stored as `path/to/my/file.tar.gz`.
 
 **Example Request:**
 ```bash
 curl  -X PUT \
-  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --form 'mimeType="text/toml"' \
-  --form 'file=@/home/shawn/code/SaladTechnologies/storage-service/wrangler.toml'
+  --form 'file=@/path/to/my/file.tar.gz'
 ```
 
 **Example Response:**
 ```json
 {
-  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml"
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz"
 }
 ```
 
@@ -57,10 +57,10 @@ When uploading a file, you can optionally request to sign the url, which will al
 
 ```bash
 curl  -X PUT \
-  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --form 'mimeType="text/toml"' \
-  --form 'file=@/home/shawn/code/SaladTechnologies/storage-service/wrangler.toml' \
+  --form 'file=@/path/to/my/file.tar.gz' \
   --form 'sign=true' \
   --signatureExp '86400'
 ```
@@ -68,7 +68,7 @@ curl  -X PUT \
 **Example Response, Signed URL**
 ```json
 {
-  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
 }
 ```
 
@@ -77,7 +77,7 @@ curl  -X PUT \
 
 ### Download a File
 
-#### GET `/organizations/:organization_name/files/:filename`
+#### GET `/organizations/:organization_name/files/:filename+`
 
 Downloads a file from the specified organization.
 
@@ -89,7 +89,7 @@ Downloads a file from the specified organization.
 **Example Request:**
 ```bash
 curl -X GET \
-  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --output wrangler.toml
 ```
@@ -98,7 +98,7 @@ curl -X GET \
 
 ### Delete a File
 
-#### DELETE `/organizations/:organization_name/files/:filename`
+#### DELETE `/organizations/:organization_name/files/:filename+`
 
 Deletes a file from the specified organization.
 
@@ -109,7 +109,7 @@ Deletes a file from the specified organization.
 **Example Request:**
 ```bash
 curl -X DELETE \
-  'https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY'
 ```
 
@@ -137,7 +137,7 @@ curl -X GET \
 {
   "files": [
     {
-      "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml",
+      "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz",
       "size": 1024,
       "mimeType": "text/toml",
       "uploaded": "2021-09-01T12:00:00Z",
@@ -149,7 +149,7 @@ curl -X GET \
 
 ### Get A Signed Url for a File
 
-#### POST `/organizations/:organization_name/file_tokens/:filename`
+#### POST `/organizations/:organization_name/file_tokens/:filename+`
 
 Creates a signed URL for a file in the specified organization.
 
@@ -168,6 +168,6 @@ curl -X POST \
 **Example Response:**
 ```json
 {
-  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/wrangler.toml?token=974360ea-63f7-4db3-9692-72ca5dbae615"
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz?token=974360ea-63f7-4db3-9692-72ca5dbae615"
 }
 ```
