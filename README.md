@@ -40,7 +40,7 @@ Uploads a file to the specified organization.
 curl  -X PUT \
   'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
-  --form 'mimeType="text/toml"' \
+  --form 'mimeType="application/tar+gzip"' \
   --form 'file=@/path/to/my/file.tar.gz'
 ```
 
@@ -59,7 +59,7 @@ When uploading a file, you can optionally request to sign the url, which will al
 curl  -X PUT \
   'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
-  --form 'mimeType="text/toml"' \
+  --form 'mimeType="application/tar+gzip"' \
   --form 'file=@/path/to/my/file.tar.gz' \
   --form 'sign=true' \
   --signatureExp '86400'
@@ -139,7 +139,7 @@ curl -X GET \
     {
       "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz",
       "size": 1024,
-      "mimeType": "text/toml",
+      "mimeType": "application/tar+gzip",
       "uploaded": "2021-09-01T12:00:00Z",
       "etag": "1234567890"
     }
