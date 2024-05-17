@@ -1,0 +1,26 @@
+name = "storage-service"
+main = "src/index.ts"
+compatibility_date = "2024-02-08"
+compatibility_flags = ["nodejs_compat"]
+
+[placement]
+mode = "smart"
+
+[vars]
+AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
+JWKS_URL = "https://matrix-rest-api.salad.com/.well-known/workload-jwks.json"
+REQUIRE_PAYMENT_METHOD = "true"
+TOKEN_CACHE_TTL = "60"
+JWKS_CACHE_TTL = "600"
+MINIMUM_SIGNATURE_DURATION_SECONDS = "60"
+MAXIMUM_SIGNATURE_DURATION_SECONDS = "2592000"
+DEFAULT_SIGNATURE_DURATION_SECONDS = "2592000"
+SALAD_USERNAME = "salad-inference-engine"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "user-file-storage"
+
+[[kv_namespaces]]
+binding = "TOKEN_CACHE"
+id = "4e600a3c357f4c659cd5ba6bd1565e97"

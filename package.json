@@ -3,7 +3,9 @@
   "version": "1.1.0",
   "description": "A service to allow users to upload files for use in other services",
   "scripts": {
-    "deploy": "wrangler deploy",
+    "deploy-local": "wrangler deploy -c wrangler.local.toml",
+    "deploy-dev": "wrangler deploy -c wrangler.dev.toml",
+    "deploy-prod": "wrangler deploy -c wrangler.prod.toml",
     "start": "wrangler dev",
     "test": "vitest run"
   },
