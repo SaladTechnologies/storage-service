@@ -91,7 +91,7 @@ Downloads a file from the specified organization.
 curl -X GET \
   'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
-  --output wrangler.toml
+  --output file.tar.gz
 ```
 
 ---
@@ -160,7 +160,7 @@ Creates a signed URL for a file in the specified organization.
 **Example Request:**
 ```bash
 curl -X POST \
-  'https://storage-api.salad.com/organizations/salad-benchmarking/file_tokens/wrangler.toml' \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/file_tokens/path/to/my/file.tar.gz' \
   --header 'Salad-Api-Key: YOURAPIKEY' \
   --data '{"method": "GET", "expires": 86400}'
 ```
