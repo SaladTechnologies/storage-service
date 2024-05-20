@@ -62,7 +62,7 @@ curl  -X PUT \
   --form 'mimeType="application/tar+gzip"' \
   --form 'file=@/path/to/my/file.tar.gz' \
   --form 'sign=true' \
-  --signatureExp '86400'
+  --form 'signatureExp=86400'
 ```
 
 **Example Response, Signed URL**
