@@ -17,3 +17,6 @@ steps:
     parameters:
       projectDirectory: ${{ parameters.projectDirectory }}
       scriptFile: test.ps1
+      env:
+        CLOUDFLARE_STORAGE_PASSWORD: $(LOCAL_STORAGE_PASSWORD)
+        DEV_KEY: $(DEV_KEY)

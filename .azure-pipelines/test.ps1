@@ -55,6 +55,14 @@ function Initialize {
         Show-LogCommand -Content 'npm install'
         & npm install
         Assert-LastExitCodeSuccess -LastExecutableName 'npm'
+
+        # Set up .dev.vars
+        Show-LogSection -Content 'Setting up .dev.vars...'
+        $varsFile = Join-Path -Path $projectRoot -ChildPath '.dev.vars'
+        "SALAD_PASSWORD=${Env:CLOUDFLARE_STORAGE_PASSWORD}" | Out-File -FilePath $varsFile
+        "TEST_API_KEY=${Env:DEV_KEY}" | Out-File -FilePath $varsFile -Append
+        'TEST_ORG=azure-devops' | Out-File -FilePath $varsFile -Append
+        'TEST_ORG_ID=' | Out-File -FilePath $varsFile -Append
     }
 }
 
