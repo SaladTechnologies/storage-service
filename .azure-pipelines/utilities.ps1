@@ -29,6 +29,34 @@ function Assert-LastExitCodeSuccess {
     }
 }
 
+function Get-ScriptBlockOutput {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNull()]
+        [scriptblock]
+        $ScriptBlock
+    )
+
+    process {
+        try {
+            $version = Invoke-Command -ScriptBlock $ScriptBlock | Out-String
+            if ([string]::IsNullOrWhiteSpace($version)) {
+                $version = $null
+            }
+            else {
+                $version = $version.Trim()
+            }
+        }
+        catch {
+            $version = $null
+        }
+
+        $version
+    }
+}
+
 function Get-NodeVersion {
     [CmdletBinding()]
     [OutputType([string])]
