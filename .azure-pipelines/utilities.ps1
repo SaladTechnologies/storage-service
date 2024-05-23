@@ -94,6 +94,17 @@ function Get-NvmrcVersion {
     }
 }
 
+function Get-NpmVersion {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    process {
+        Get-ScriptBlockOutput -ScriptBlock { & npm --version }
+        Assert-LastExitCodeSuccess -LastExecutableName 'npm'
+    }
+}
+
 function Test-AzureDevOpsEnvironment {
     [CmdletBinding()]
     [OutputType([bool])]
