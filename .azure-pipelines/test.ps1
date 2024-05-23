@@ -20,6 +20,7 @@ param()
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+$projectRoot = Split-Path -Path $PSScriptRoot -Parent
 . (Join-Path -Path $projectRoot -ChildPath '.azure-pipelines' -AdditionalChildPath 'utilities.ps1')
 
 function Initialize {
@@ -69,7 +70,6 @@ function Test {
     }
 }
 
-$projectRoot = Split-Path -Path $PSScriptRoot -Parent
 Push-Location -Path $projectRoot
 try {
     Initialize
