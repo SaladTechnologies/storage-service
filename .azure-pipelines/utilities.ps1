@@ -68,6 +68,32 @@ function Get-NodeVersion {
     }
 }
 
+function Get-NvmrcVersion {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    process {
+        try {
+            $version = Get-Content -Path '.nvmrc' -Raw -Encoding utf8
+            if ([string]::IsNullOrWhiteSpace($version)) {
+                $version = $null
+            }
+            else {
+                $version = $version.Trim()
+                if (-not $version.StartsWith('v', [System.StringComparison]::Ordinal)) {
+                    $version = "v${version}"
+                }
+            }
+        }
+        catch {
+            $version = $null
+        }
+
+        $version
+    }
+}
+
 function Test-AzureDevOpsEnvironment {
     [CmdletBinding()]
     [OutputType([bool])]
