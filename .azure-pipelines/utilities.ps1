@@ -29,6 +29,17 @@ function Assert-LastExitCodeSuccess {
     }
 }
 
+function Get-NodeVersion {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+
+    process {
+        Get-ScriptBlockOutput -ScriptBlock { & node --version }
+        Assert-LastExitCodeSuccess -LastExecutableName 'node'
+    }
+}
+
 function Test-AzureDevOpsEnvironment {
     [CmdletBinding()]
     [OutputType([bool])]
