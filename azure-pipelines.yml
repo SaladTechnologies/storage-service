@@ -1,0 +1,42 @@
+parameters:
+  - name: environment
+    displayName: Environment
+    type: string
+    default: development
+    values:
+      - development
+      - production
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - .vscode
+      - .gitignore
+      - README.md
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - .vscode
+      - .gitignore
+      - README.md
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - ${{ if or(ne(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')) }}:
+      - template: .azure-pipelines/stages/test-stage.yaml
+        parameters:
+          projectDirectory: $(Build.Repository.LocalPath)
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - template: .azure-pipelines/stages/deploy-stage.yaml
+        parameters:
+          projectDirectory: $(Build.Repository.LocalPath)
+          environment: ${{ parameters.environment }}

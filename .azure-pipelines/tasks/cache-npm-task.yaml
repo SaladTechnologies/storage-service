@@ -1,0 +1,20 @@
+parameters:
+  - name: projectDirectory
+    type: string
+    default: ""
+  - name: cacheKey
+    type: string
+    default: "default"
+  - name: cacheVersion
+    type: string
+    default: "default"
+
+steps:
+  - task: Cache@2
+    displayName: Cache npm packages
+    inputs:
+      key: '"${{ parameters.cacheKey }}" | "${{ parameters.cacheVersion }}" | "npm" | "$(Agent.OS)" | ${{ parameters.projectDirectory }}/package.lock'
+      restoreKeys: |
+        "${{ parameters.cacheKey }}" | "${{ parameters.cacheVersion }}" | "npm" | "$(Agent.OS)"
+        "${{ parameters.cacheKey }}" | "${{ parameters.cacheVersion }}" | "npm"
+      path: ${{ parameters.projectDirectory }}/.npm/cache
