@@ -105,6 +105,28 @@ function Get-NpmVersion {
     }
 }
 
+function Compare-NodeVersion {
+    [CmdletBinding()]
+    [OutputType([int])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $FirstVersion,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $SecondVersion
+    )
+
+    process {
+        $FirstVersion = [System.Management.Automation.SemanticVersion]::new($FirstVersion.TrimStart('v'))
+        $SecondVersion = [System.Management.Automation.SemanticVersion]::new($SecondVersion.TrimStart('v'))
+        $FirstVersion.CompareTo($SecondVersion)
+    }
+}
+
 function Test-AzureDevOpsEnvironment {
     [CmdletBinding()]
     [OutputType([bool])]
