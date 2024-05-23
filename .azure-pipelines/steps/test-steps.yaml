@@ -7,6 +7,8 @@ steps:
   - template: ../tasks/install-node-task.yaml
     parameters:
       projectDirectory: ${{ parameters.projectDirectory }}
+      authenticateNpm: false
+      authenticateYarn: false
   - template: ../tasks/cache-npm-task.yaml
     parameters:
       projectDirectory: ${{ parameters.projectDirectory }}
