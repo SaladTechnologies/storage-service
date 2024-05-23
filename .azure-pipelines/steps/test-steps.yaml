@@ -1,0 +1,17 @@
+parameters:
+  - name: projectDirectory
+    type: string
+    default: ""
+
+steps:
+  - template: ../tasks/install-node-task.yaml
+    parameters:
+      projectDirectory: ${{ parameters.projectDirectory }}
+  - template: ../tasks/cache-npm-task.yaml
+    parameters:
+      projectDirectory: ${{ parameters.projectDirectory }}
+      cacheVersion: $(CacheVersion)
+  - template: ../tasks/pwsh-task.yaml
+    parameters:
+      projectDirectory: ${{ parameters.projectDirectory }}
+      scriptFile: test.ps1

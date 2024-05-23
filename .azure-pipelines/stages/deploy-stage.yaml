@@ -1,0 +1,25 @@
+parameters:
+  - name: projectDirectory
+    type: string
+    default: ""
+  - name: environment
+    type: string
+    default: ""
+
+stages:
+  - stage: deploy
+    displayName: Deploy
+    jobs:
+      - job: Deploy
+        variables:
+          # Defines `CacheVersion` (for use with the various cache tasks).
+          - name: CacheVersion
+            value: $[ format('{0:yyyy}.{0:MM}', pipeline.startTime) ]
+        steps:
+          - template: ../steps/test-steps.yaml
+            parameters:
+              projectDirectory: ${{ parameters.projectDirectory }}
+          - template: ../steps/deploy-steps.yaml
+            parameters:
+              projectDirectory: ${{ parameters.projectDirectory }}
+              environment: ${{ parameters.environment }}

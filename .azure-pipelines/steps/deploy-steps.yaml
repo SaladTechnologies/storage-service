@@ -1,0 +1,14 @@
+parameters:
+  - name: projectDirectory
+    type: string
+    default: ""
+  - name: environment
+    type: string
+    default: ""
+
+steps:
+  - template: ../tasks/pwsh-task.yaml
+    parameters:
+      projectDirectory: ${{ parameters.projectDirectory }}
+      scriptFile: deploy.ps1
+      arguments: -Environment "${{ parameters.environment }}"
