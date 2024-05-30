@@ -62,7 +62,7 @@ function Initialize {
         "SALAD_PASSWORD=${Env:CLOUDFLARE_STORAGE_PASSWORD}" | Out-File -FilePath $varsFile
         "TEST_API_KEY=${Env:DEV_KEY}" | Out-File -FilePath $varsFile -Append
         'TEST_ORG=azure-devops' | Out-File -FilePath $varsFile -Append
-        'TEST_ORG_ID=' | Out-File -FilePath $varsFile -Append
+        'TEST_ORG_ID=e701ed8d-ac98-4703-82e9-2f70e5a17233' | Out-File -FilePath $varsFile -Append
     }
 }
 
