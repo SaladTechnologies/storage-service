@@ -6,6 +6,7 @@ import {
   deleteFile,
   listFiles,
   signFile,
+  uploadPart,
 } from "./routes";
 import { authRequest } from "./middleware";
 
@@ -21,6 +22,13 @@ router.put<AuthedRequest>(
   authRequest,
   withContent,
   uploadFile
+);
+
+router.put<AuthedRequest>(
+  "/organizations/:organization_name/file_parts/:filename+",
+  authRequest,
+  withContent,
+  uploadPart
 );
 
 router.post<AuthedRequest>(
