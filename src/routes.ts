@@ -299,16 +299,13 @@ export const uploadPart: RequestHandler<AuthedRequest, CFArgs> = async (
     return error(400, "Missing content-type header");
   }
 
-  if (!request.content) {
+  if (!request.body) {
     return error(400, "No part uploaded");
   }
 
   try {
     const mpu = env.BUCKET.resumeMultipartUpload(key, uploadId);
-    const uploadedPart = await mpu.uploadPart(
-      parsedPartNumber,
-      request.content
-    );
+    const uploadedPart = await mpu.uploadPart(parsedPartNumber, request.body);
     return uploadedPart;
   } catch (e: any) {
     return error(400, e.message);

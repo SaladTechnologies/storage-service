@@ -27,7 +27,6 @@ router.put<AuthedRequest>(
 router.put<AuthedRequest>(
   "/organizations/:organization_name/file_parts/:filename+",
   authRequest,
-  withContent,
   uploadPart
 );
 
