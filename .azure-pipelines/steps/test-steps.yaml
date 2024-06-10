@@ -9,10 +9,10 @@ steps:
       projectDirectory: ${{ parameters.projectDirectory }}
       authenticateNpm: false
       authenticateYarn: false
-  # - template: ../tasks/cache-npm-task.yaml
-  #   parameters:
-  #     projectDirectory: ${{ parameters.projectDirectory }}
-  #     cacheVersion: $(CacheVersion)
+  - template: ../tasks/cache-npm-task.yaml
+    parameters:
+      projectDirectory: ${{ parameters.projectDirectory }}
+      cacheVersion: $(CacheVersion)
   - template: ../tasks/pwsh-task.yaml
     parameters:
       projectDirectory: ${{ parameters.projectDirectory }}
