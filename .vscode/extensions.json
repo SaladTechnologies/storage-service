@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "ms-azure-devops.azure-pipelines",
+    "ms-vscode.powershell",
+    "ms-vsliveshare.vsliveshare",
+    "wayou.vscode-todo-highlight"
+  ],
+  "unwantedRecommendations": []
+}
