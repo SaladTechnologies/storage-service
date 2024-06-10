@@ -12,9 +12,9 @@ stages:
     jobs:
       - job: Deploy
         variables:
-          # Defines `CacheVersion` (for use with the various cache tasks).
-          - name: CacheVersion
-            value: $[ format('{0:yyyy}.{0:MM}', pipeline.startTime) ]
+          # # Defines `CacheVersion` (for use with the various cache tasks).
+          # - name: CacheVersion
+          #   value: $[ format('{0:yyyy}.{0:MM}', pipeline.startTime) ]
           - group: Cloudflare Storage Passwords
           - group: SaladCloud API Keys
         steps:
