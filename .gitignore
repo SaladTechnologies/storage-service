@@ -3,3 +3,4 @@ node_modules
 .dev.vars
 bigtestfile
 .wrangler
+do-multipart-upload.js
