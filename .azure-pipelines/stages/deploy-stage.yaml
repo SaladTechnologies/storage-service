@@ -18,7 +18,7 @@ stages:
           #   value: $[ format('{0:yyyy}.{0:MM}', pipeline.startTime) ]
           - group: Cloudflare Storage Passwords
           - group: SaladCloud API Keys
-          - group: Terraform Cloudflare
+          - group: Cloudflare Worker API Token
         steps:
           - template: ../steps/test-steps.yaml
             parameters:
