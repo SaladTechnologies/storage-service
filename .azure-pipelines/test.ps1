@@ -4,13 +4,7 @@
     Pushes ruleset to registry.
 
     .DESCRIPTION
-    The `push.ps1` script pushes the falco ruleset to the primary registry server of the target environment.
-
-    .PARAMETER Environment
-    The target environment. May be `production` or `development`.
-
-    .PARAMETER Version
-    The version number for this falco ruleset. Must be a valid SemVer.
+    The `test.ps1` script tests deployment of the storage service.
 #>
 #Requires -Version 7
 [CmdletBinding()]
@@ -63,6 +57,7 @@ function Initialize {
         "TEST_API_KEY=${Env:DEV_KEY}" | Out-File -FilePath $varsFile -Append
         'TEST_ORG=azure-devops' | Out-File -FilePath $varsFile -Append
         'TEST_ORG_ID=e701ed8d-ac98-4703-82e9-2f70e5a17233' | Out-File -FilePath $varsFile -Append
+        Get-Content -Path $varsFile
     }
 }
 
