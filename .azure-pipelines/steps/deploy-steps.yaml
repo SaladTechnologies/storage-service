@@ -12,3 +12,5 @@ steps:
       projectDirectory: ${{ parameters.projectDirectory }}
       scriptFile: deploy.ps1
       arguments: -Environment "${{ parameters.environment }}"
+      env:
+        CLOUDFLARE_API_TOKEN: $(CLOUDFLARE_API_KEY)
