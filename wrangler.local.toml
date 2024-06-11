@@ -2,6 +2,7 @@ name = "storage-service"
 main = "src/index.ts"
 compatibility_date = "2024-02-08"
 compatibility_flags = ["nodejs_compat"]
+account_id = "7d10f2cedbf41e52f01696a48f5d2a2c"
 
 [placement]
 mode = "smart"
