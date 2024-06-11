@@ -7,8 +7,8 @@ compatibility_flags = ["nodejs_compat"]
 mode = "smart"
 
 [vars]
-AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
-JWKS_URL = "https://matrix-rest-api.salad.com/.well-known/workload-jwks.json"
+AUTH_URL = "https://portal-api-dev.salad.com/api/portal/webhooks/inference"
+JWKS_URL = "https://matrix-rest-api-testing.salad.com/.well-known/workload-jwks.json"
 REQUIRE_PAYMENT_METHOD = "true"
 TOKEN_CACHE_TTL = "60"
 JWKS_CACHE_TTL = "600"
