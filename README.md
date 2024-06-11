@@ -9,7 +9,7 @@ This is a simple HTTP service to allow Salad customers to temporarily upload ass
       - [PUT `/organizations/:organization_name/files/:filename+`](#put-organizationsorganization_namefilesfilename)
     - [Upload a Big File](#upload-a-big-file)
       - [PUT `/organizations/:organization_name/files/:filename+?action=mpu-create`](#put-organizationsorganization_namefilesfilenameactionmpu-create)
-      - [PUT \`/organizations/:organization\_name/file\_parts/:filename+?partNumber=1\&uploadId=1234567890](#put-organizationsorganization_namefile_partsfilenamepartnumber1uploadid1234567890)
+      - [PUT `/organizations/:organization_name/file_parts/:filename+?partNumber=1&uploadId=1234567890`](#put-organizationsorganization_namefile_partsfilenamepartnumber1uploadid1234567890)
       - [PUT `/organizations/:organization_name/files/:filename+?action=mpu-complete&uploadId=1234567890`](#put-organizationsorganization_namefilesfilenameactionmpu-completeuploadid1234567890)
     - [Download a File](#download-a-file)
       - [GET `/organizations/:organization_name/files/:filename+`](#get-organizationsorganization_namefilesfilename)
@@ -104,7 +104,7 @@ curl -X PUT \
 }
 ```
 
-#### PUT `/organizations/:organization_name/file_parts/:filename+?partNumber=1&uploadId=1234567890
+#### PUT `/organizations/:organization_name/file_parts/:filename+?partNumber=1&uploadId=1234567890`
 
 For each part of the file, upload the part to the specified organization and file. You must include the `partNumber` and `uploadId` query parameters in the request.
 
