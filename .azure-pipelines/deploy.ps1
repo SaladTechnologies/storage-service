@@ -31,12 +31,12 @@ try {
     Show-LogSection -Content 'Deploying storage service...'
     if ($Environment -eq 'development') {
         Show-LogCommand -Content 'npm deploy-dev'
-        & npm deploy-dev
+        & npm run deploy-dev
         Assert-LastExitCodeSuccess -LastExecutableName 'npm'
     }
     else {
         Show-LogCommand -Content 'npm deploy-prod'
-        & npm deploy-prod
+        & npm run deploy-prod
         Assert-LastExitCodeSuccess -LastExecutableName 'npm'
     }
 }
