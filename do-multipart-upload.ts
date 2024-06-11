@@ -145,8 +145,6 @@ export const uploadFileInParts = async (
       throw new Error(`File not found: ${filename}`);
     })
   ).size;
-  const numChunks = Math.ceil(fileSize / partSize);
-
   const uploadId = await createUpload(filename, remotePath);
 
   // console.log(

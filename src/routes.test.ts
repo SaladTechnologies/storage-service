@@ -172,8 +172,12 @@ describe("PUT /organizations/:organization_name/files/:filename+", () => {
     );
 
     const completeResponse = await router.fetch(completeRequest, env);
+    const { url } = await completeResponse.json();
 
     expect(completeResponse.status).toBe(200);
+    expect(url).toEqual(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt`
+    );
   });
 });
 

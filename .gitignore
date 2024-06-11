@@ -1,6 +1,6 @@
 dist
 node_modules
 .dev.vars
-bigtestfile
+bigtestfile*
 .wrangler
 do-multipart-upload.js

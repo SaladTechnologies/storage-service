@@ -40,7 +40,7 @@ export const uploadFile: RequestHandler<AuthedRequest, CFArgs> = async (
         return error(400, "Invalid request body. Must include parts array");
       }
       const obj = await mpu.complete(body.parts);
-      return new Response(JSON.stringify({}), {
+      return new Response(JSON.stringify({ url }), {
         headers: {
           etag: obj.httpEtag,
         },

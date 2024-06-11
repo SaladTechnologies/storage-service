@@ -7,6 +7,10 @@ This is a simple HTTP service to allow Salad customers to temporarily upload ass
     - [Authorization](#authorization)
     - [Upload a File](#upload-a-file)
       - [PUT `/organizations/:organization_name/files/:filename+`](#put-organizationsorganization_namefilesfilename)
+    - [Upload a Big File](#upload-a-big-file)
+      - [PUT `/organizations/:organization_name/files/:filename+?action=mpu-create`](#put-organizationsorganization_namefilesfilenameactionmpu-create)
+      - [PUT \`/organizations/:organization\_name/file\_parts/:filename+?partNumber=1\&uploadId=1234567890](#put-organizationsorganization_namefile_partsfilenamepartnumber1uploadid1234567890)
+      - [PUT `/organizations/:organization_name/files/:filename+?action=mpu-complete&uploadId=1234567890`](#put-organizationsorganization_namefilesfilenameactionmpu-completeuploadid1234567890)
     - [Download a File](#download-a-file)
       - [GET `/organizations/:organization_name/files/:filename+`](#get-organizationsorganization_namefilesfilename)
     - [Delete a File](#delete-a-file)
@@ -29,7 +33,7 @@ Requests to the S4 service must include either:
 
 #### PUT `/organizations/:organization_name/files/:filename+`
 
-Uploads a file to the specified organization.
+Uploads a file up to 100MB to the specified organization.
 
 **Request Parameters:**
 - `organization_name` (string): The name of the organization.
@@ -69,6 +73,87 @@ curl  -X PUT \
 ```json
 {
   "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz?token=8eb6de1b-b313-4169-8411-39860ebc73ab",
+}
+```
+
+### Upload a Big File
+
+The S4 service is a cloudflare workers application, so it is constrained to a maximum body size of 100mb. To upload files larger than 100mb, you can use the multipart upload feature of the S4 service. This feature allows you to upload a file in multiple parts, and then combine the parts into a single file. The process looks like this:
+
+1. Create the multipart upload with one request
+2. Upload each part of the file with a separate request. This can be done concurrently.
+3. Complete the multipart upload with one request, which will combine the parts into a single file.
+
+There is a reference implementation of this process in the `do-multipart-upload.ts` script in this repository.
+
+#### PUT `/organizations/:organization_name/files/:filename+?action=mpu-create`
+
+First, create a multipart upload for the specified organization and file. You will receive an `uploadId` in the response, which you will use to upload the parts of the file.
+
+**Example Request:**
+```bash
+curl -X PUT \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz?action=mpu-create' \
+  --header 'Salad-Api-Key: YOURAPIKEY'
+```
+
+**Example Response:**
+```json
+{
+  "uploadId": "1234567890"
+}
+```
+
+#### PUT `/organizations/:organization_name/file_parts/:filename+?partNumber=1&uploadId=1234567890
+
+For each part of the file, upload the part to the specified organization and file. You must include the `partNumber` and `uploadId` query parameters in the request.
+
+You will need to split the file into parts first. The maximum part size is 100MB. Here's how in bash:
+
+```bash
+split -b 80M /path/to/my/file.tar.gz /path/to/my/file.tar.gz.part_
+```
+
+This will split the file into parts of 80MB each, with the filenames `file.tar.gz.part_aa`, `file.tar.gz.part_ab`, etc. 
+
+
+**Example Request For Each Part:**
+
+```bash
+curl -X PUT \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/file_parts/path/to/my/file.tar.gz?partNumber=1&uploadId=1234567890 \
+  --header 'Salad-Api-Key: YOURAPIKEY' \
+  --header 'Content-Type: application/octet-stream' \
+  --data-binary @/path/to/my/file.tar.gz.part_aa
+```
+
+Note that `partNumber` is 1-indexed, so the first part is `partNumber=1`.
+
+**Example Response:**
+```json
+{
+  "partNumber": 1,
+  "etag": "1234567890"
+}
+```
+
+#### PUT `/organizations/:organization_name/files/:filename+?action=mpu-complete&uploadId=1234567890`
+
+After uploading all parts of the file, complete the multipart upload to combine the parts into a single file.
+
+**Example Request:**
+```bash
+curl -X PUT \
+  'https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz?action=mpu-complete&uploadId=1234567890 \
+  --header 'Salad-Api-Key: YOURAPIKEY' \
+  --header 'Content-Type: application/json' \
+  --data '{"parts": [{"partNumber": 1, "etag": "1234567890"}]}'
+```
+
+**Example Response:**
+```json
+{
+  "url": "https://storage-api.salad.com/organizations/salad-benchmarking/files/path/to/my/file.tar.gz"
 }
 ```
 
