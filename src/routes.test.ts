@@ -125,6 +125,95 @@ describe("PUT /organizations/:organization_name/files/:filename+", () => {
       `https://example.com/organizations/${env.TEST_ORG}/files/path/to/file.txt`
     );
   });
+
+  it("Allows creating a multipart upload", async () => {
+    const request = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-create`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+      }
+    );
+
+    const response = await router.fetch(request, env);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.uploadId).toBeDefined();
+  });
+
+  it("Allows completing a multipart upload", async () => {
+    const createRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-create`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+      }
+    );
+
+    const createResponse = await router.fetch(createRequest, env);
+    const createBody = await createResponse.json();
+
+    const completeRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-complete&uploadId=${createBody.uploadId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+        body: JSON.stringify({
+          parts: [],
+        }),
+      }
+    );
+
+    const completeResponse = await router.fetch(completeRequest, env);
+    const { url } = await completeResponse.json();
+
+    expect(completeResponse.status).toBe(200);
+    expect(url).toEqual(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt`
+    );
+  });
+});
+
+describe("PUT /organizations/:organization_name/file_parts/:filename+", () => {
+  it("Uploads a part to a multipart upload", async () => {
+    const createRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-create`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+      }
+    );
+
+    const createResponse = await router.fetch(createRequest, env);
+    const createBody = await createResponse.json();
+
+    const partRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/file_parts/bigfile.txt?uploadId=${createBody.uploadId}&partNumber=1`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+        body: "somecontent",
+      }
+    );
+
+    const partResponse = await router.fetch(partRequest, env);
+    const partBody = await partResponse.json();
+
+    expect(partResponse.status).toBe(200);
+    expect(partBody.partNumber).toBeDefined();
+    expect(partBody.etag).toBeDefined();
+  });
 });
 
 describe("GET /organizations/:organization_name/files/:filename+", () => {
@@ -225,6 +314,35 @@ describe("DELETE /organizations/:organization_name/files/:filename+", () => {
     const response = await router.fetch(request, env);
 
     expect(response.status).toBe(204);
+  });
+
+  it("allows aborting a multipart upload", async () => {
+    const createRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-create`,
+      {
+        method: "PUT",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+      }
+    );
+
+    const createResponse = await router.fetch(createRequest, env);
+    const createBody = await createResponse.json();
+
+    const abortRequest = new Request(
+      `https://example.com/organizations/${env.TEST_ORG}/files/bigfile.txt?action=mpu-abort&uploadId=${createBody.uploadId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Salad-Api-Key": env.TEST_API_KEY!,
+        },
+      }
+    );
+
+    const abortResponse = await router.fetch(abortRequest, env);
+
+    expect(abortResponse.status).toBe(204);
   });
 });
 

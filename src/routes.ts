@@ -11,73 +11,107 @@ export const uploadFile: RequestHandler<AuthedRequest, CFArgs> = async (
   env,
   ctx
 ) => {
-  if (!request.content) {
-    return new Response("No file uploaded", { status: 400 });
-  }
-
   const contentType = request.headers.get("content-type");
-
-  if (!contentType || !contentType.includes("multipart/form-data")) {
-    return error(400, "Invalid content type. Must be multipart/form-data");
-  }
-
-  // Verify that request.content is a FormData object
-  const formData = request.content as FormData;
-
-  const file = formData.get("file");
   const filename = request.filename;
-  const mimeType = formData.get("mimeType");
-
-  if (!file || !filename) {
-    return error(400, "No file uploaded");
-  }
-
-  let key = `${request.orgId}/${filename}`;
-
-  let opts: R2PutOptions = !!mimeType
-    ? {
-        httpMetadata: {
-          contentType: mimeType.toString(),
-        },
-      }
-    : {};
-
-  await env.BUCKET.put(key, file, opts);
-
+  const key = `${request.orgId}/${filename}`;
+  const action = request.query.action;
+  const allowedActions = ["mpu-create", "mpu-complete"];
   let url = new URL(
     `/organizations/${request.organization_name}/files/${filename}`,
     getBaseUrl(request)
   ).toString();
 
-  const sign = formData.get("sign");
-  const sigExp =
-    formData.get("signatureExp") || env.DEFAULT_SIGNATURE_DURATION_SECONDS;
-  if (sign && typeof sign !== "string") {
-    return error(400, "Invalid sign parameter. Must be a string");
-  }
-  if (sigExp && typeof sigExp !== "string") {
-    return error(400, "Invalid signatureExp parameter. Must be a string");
-  }
-  const createSignature = sign && sign.toLowerCase() === "true";
-  if (createSignature) {
-    const exp = parseInt(sigExp);
-    const minExp = parseInt(env.MINIMUM_SIGNATURE_DURATION_SECONDS);
-    const maxExp = parseInt(env.MAXIMUM_SIGNATURE_DURATION_SECONDS);
-    const expError = validateExpiration(exp, minExp, maxExp);
-    if (expError) {
-      return expError;
+  if (action === "mpu-create") {
+    try {
+      const mpu = await env.BUCKET.createMultipartUpload(key);
+      return { uploadId: mpu.uploadId };
+    } catch (e: any) {
+      return error(400, e.message);
     }
-    const data: AccessTokenData = {
-      orgId: request.orgId,
-      orgName: request.organization_name,
-      filename,
-      method: "GET",
-    };
-    const token = await stashToken(env, data, exp);
-    url += `?token=${token}`;
-  }
+  } else if (action === "mpu-complete") {
+    const uploadId = request.query.uploadId;
+    if (!uploadId || Array.isArray(uploadId)) {
+      return error(400, "Missing or invalid uploadId");
+    }
+    try {
+      const mpu = env.BUCKET.resumeMultipartUpload(key, uploadId);
+      const body = (await request.json()) as { parts: R2UploadedPart[] };
+      if (!body || !Array.isArray(body.parts)) {
+        return error(400, "Invalid request body. Must include parts array");
+      }
+      const obj = await mpu.complete(body.parts);
+      return new Response(JSON.stringify({ url }), {
+        headers: {
+          etag: obj.httpEtag,
+        },
+      });
+    } catch (e: any) {
+      return error(400, e.message);
+    }
+  } else if (action && !allowedActions.includes(action as string)) {
+    return error(
+      400,
+      `Invalid action. Must be one of: ${allowedActions.join(", ")}`
+    );
+  } else {
+    if (!request.content) {
+      return new Response("No file uploaded", { status: 400 });
+    }
+    if (!contentType || !contentType.includes("multipart/form-data")) {
+      return error(400, "Invalid content type. Must be multipart/form-data");
+    }
 
-  return { url };
+    // Verify that request.content is a FormData object
+    const formData = request.content as FormData;
+
+    const file = formData.get("file");
+
+    const mimeType = formData.get("mimeType");
+
+    if (!file || !filename) {
+      return error(400, "No file uploaded");
+    }
+
+    let opts: R2PutOptions = !!mimeType
+      ? {
+          httpMetadata: {
+            contentType: mimeType.toString(),
+          },
+        }
+      : {};
+
+    await env.BUCKET.put(key, file, opts);
+
+    const sign = formData.get("sign");
+    const sigExp =
+      formData.get("signatureExp") || env.DEFAULT_SIGNATURE_DURATION_SECONDS;
+    if (sign && typeof sign !== "string") {
+      return error(400, "Invalid sign parameter. Must be a string");
+    }
+    if (sigExp && typeof sigExp !== "string") {
+      return error(400, "Invalid signatureExp parameter. Must be a string");
+    }
+    const createSignature = sign && sign.toLowerCase() === "true";
+    if (createSignature) {
+      const exp = parseInt(sigExp);
+      const minExp = parseInt(env.MINIMUM_SIGNATURE_DURATION_SECONDS);
+      const maxExp = parseInt(env.MAXIMUM_SIGNATURE_DURATION_SECONDS);
+      const expError = validateExpiration(exp, minExp, maxExp);
+      if (expError) {
+        return expError;
+      }
+      const data: AccessTokenData = {
+        orgId: request.orgId,
+        orgName: request.organization_name,
+        filename,
+        method: "GET",
+      };
+      const token = await stashToken(env, data, exp);
+      url += `?token=${token}`;
+    }
+
+    return { url };
+  }
 };
 
 export const downloadFile: RequestHandler<AuthedRequest, CFArgs> = async (
@@ -111,11 +145,28 @@ export const deleteFile: RequestHandler<AuthedRequest, CFArgs> = async (
   const filename = request.filename;
   const key = `${request.orgId}/${filename}`;
 
-  try {
-    await env.BUCKET.delete(key);
-  } catch (e: any) {
-    console.error(e);
-    return new Response(e.message, { status: 500 });
+  const action = request.query.action;
+
+  if (!action) {
+    try {
+      await env.BUCKET.delete(key);
+    } catch (e: any) {
+      console.error(e);
+      return new Response(e.message, { status: 500 });
+    }
+  } else if (action === "mpu-abort") {
+    const uploadId = request.query.uploadId;
+    if (!uploadId || Array.isArray(uploadId)) {
+      return error(400, "Missing or invalid uploadId");
+    }
+    try {
+      const mpu = env.BUCKET.resumeMultipartUpload(key, uploadId);
+      await mpu.abort();
+    } catch (e: any) {
+      return error(400, e.message);
+    }
+  } else {
+    return error(400, "Invalid action. Must be one of: mpu-abort");
   }
 
   return new Response(null, { status: 204 });
@@ -222,4 +273,41 @@ export const signFile: RequestHandler<AuthedRequest, CFArgs> = async (
   ).toString();
 
   return { url };
+};
+
+export const uploadPart: RequestHandler<AuthedRequest, CFArgs> = async (
+  request,
+  env,
+  ctx
+) => {
+  const filename = request.filename;
+  const key = `${request.orgId}/${filename}`;
+
+  const uploadId = request.query.uploadId;
+  if (!uploadId || Array.isArray(uploadId)) {
+    return error(400, "Missing or invalid uploadId");
+  }
+
+  const partNumber = request.query.partNumber;
+  if (!partNumber || Array.isArray(partNumber)) {
+    return error(400, "Missing or invalid partNumber");
+  }
+  const parsedPartNumber = parseInt(partNumber);
+
+  const contentType = request.headers.get("content-type");
+  if (!contentType) {
+    return error(400, "Missing content-type header");
+  }
+
+  if (!request.body) {
+    return error(400, "No part uploaded");
+  }
+
+  try {
+    const mpu = env.BUCKET.resumeMultipartUpload(key, uploadId);
+    const uploadedPart = await mpu.uploadPart(parsedPartNumber, request.body);
+    return uploadedPart;
+  } catch (e: any) {
+    return error(400, e.message);
+  }
 };
