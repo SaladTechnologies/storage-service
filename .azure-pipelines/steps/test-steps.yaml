@@ -9,11 +9,15 @@ steps:
       projectDirectory: ${{ parameters.projectDirectory }}
       authenticateNpm: false
       authenticateYarn: false
-  - template: ../tasks/cache-npm-task.yaml
-    parameters:
-      projectDirectory: ${{ parameters.projectDirectory }}
-      cacheVersion: $(CacheVersion)
+  # # TODO: Re-enable once we fix cache key
+  # - template: ../tasks/cache-npm-task.yaml
+  #   parameters:
+  #     projectDirectory: ${{ parameters.projectDirectory }}
+  #     cacheVersion: $(CacheVersion)
   - template: ../tasks/pwsh-task.yaml
     parameters:
       projectDirectory: ${{ parameters.projectDirectory }}
       scriptFile: test.ps1
+      env:
+        CLOUDFLARE_STORAGE_PASSWORD: $(LOCAL_STORAGE_PASSWORD)
+        DEV_KEY: $(DEV_KEY)

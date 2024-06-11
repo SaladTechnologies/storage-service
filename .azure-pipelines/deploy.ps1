@@ -4,13 +4,10 @@
     Pushes ruleset to registry.
 
     .DESCRIPTION
-    The `push.ps1` script pushes the falco ruleset to the primary registry server of the target environment.
+    The `deploy.ps1` script deploys the storage service to the target environment.
 
     .PARAMETER Environment
     The target environment. May be `production` or `development`.
-
-    .PARAMETER Version
-    The version number for this falco ruleset. Must be a valid SemVer.
 #>
 #Requires -Version 7
 [CmdletBinding()]
