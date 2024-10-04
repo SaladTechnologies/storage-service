@@ -18,7 +18,7 @@ security:
 paths:
   /organizations/{organization_name}/files/{filename+}:
     put:
-      summary: Uploads a file
+      summary: Upload a file
       security:
         - ApiKeyAuth: []
         - BearerAuth: []
@@ -65,7 +65,7 @@ paths:
                     type: string
                     format: uri
     get:
-      summary: Downloads a file
+      summary: Download a file
       security:
         - ApiKeyAuth: []
         - BearerAuth: []
@@ -91,7 +91,7 @@ paths:
         404:
           description: File not found
     delete:
-      summary: Deletes a file
+      summary: Delete a file
       security:
         - ApiKeyAuth: []
         - BearerAuth: []
@@ -111,7 +111,7 @@ paths:
           description: File deleted successfully
   /organizations/{organization_name}/files:
     get:
-      summary: Lists all files that belong to the organization
+      summary: List all files
       security:
         - ApiKeyAuth: []
         - BearerAuth: []
@@ -147,7 +147,7 @@ paths:
 
   /organizations/{organization_name}/file_tokens/{filename+}:
     post:
-      summary: Signs a file and returns a signed URL
+      summary: Sign a file and return a signed URL
       security:
         - ApiKeyAuth: []
         - BearerAuth: []
