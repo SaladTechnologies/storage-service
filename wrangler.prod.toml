@@ -8,7 +8,7 @@ account_id = "7d10f2cedbf41e52f01696a48f5d2a2c"
 mode = "smart"
 
 [vars]
-AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/inference"
+AUTH_URL = "https://portal-api.salad.com/api/portal/webhooks/salad-simple-storage-service"
 JWKS_URL = "https://matrix-rest-api.salad.com/.well-known/workload-jwks.json"
 REQUIRE_PAYMENT_METHOD = "true"
 TOKEN_CACHE_TTL = "60"

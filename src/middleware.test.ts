@@ -21,8 +21,7 @@ describe("validateSaladApiKey", () => {
     expect(payload).toMatchObject({
       is_api_key_valid: true,
       is_organization_name_valid: true,
-      is_payment_method_attached: true,
-      is_payment_method_required: false,
+      is_entitled: true,
       organization_id: env.TEST_ORG_ID!,
       organization_name: env.TEST_ORG!,
     });
