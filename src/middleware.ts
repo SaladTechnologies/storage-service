@@ -54,8 +54,8 @@ export async function validateSaladApiKey(
     throw new Error("Invalid Organization Name");
   }
 
-  if (body.is_payment_method_required && !body.is_payment_method_attached) {
-    throw new Error("Payment Method Required");
+  if (!body.is_entitled) {
+    throw new Error("This organization is not entitled to use the S4 service");
   }
 
   await env.TOKEN_CACHE.put(cacheKey, JSON.stringify(body), {

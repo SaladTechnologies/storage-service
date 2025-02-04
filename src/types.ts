@@ -22,8 +22,7 @@ export interface Env {
 export interface ApiKeyValidationResponse {
   is_api_key_valid: boolean;
   is_organization_name_valid: boolean;
-  is_payment_method_attached: boolean;
-  is_payment_method_required: boolean;
+  is_entitled: boolean;
   organization_id: string;
   organization_name: string;
 }
