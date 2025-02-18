@@ -40,7 +40,7 @@ export async function validateSaladApiKey(
   });
 
   if (!response.ok) {
-    console.log(await response.json());
+    console.error(await response.text());
     throw new Error("Error Accessing Authentication Service");
   }
 
@@ -78,6 +78,7 @@ export async function getJWKs(env: Env): Promise<jose.JSONWebKeySet> {
 
   const response = await fetch(env.JWKS_URL);
   if (!response.ok) {
+    console.error(await response.text());
     throw new Error("Error Accessing JWKS");
   }
 
@@ -151,7 +152,7 @@ export async function authRequest(request: AuthedRequest, env: Env) {
       }
       request.orgId = payload.salad_organization_id;
     } catch (e: any) {
-      return new Response(e.message, { status: 401 });
+      return error(401, e.message);
     }
   }
 }
