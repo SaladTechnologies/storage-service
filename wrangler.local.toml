@@ -25,3 +25,6 @@ bucket_name = "user-file-storage"
 [[kv_namespaces]]
 binding = "TOKEN_CACHE"
 id = "4e600a3c357f4c659cd5ba6bd1565e97"
+
+[observability]
+enabled = true

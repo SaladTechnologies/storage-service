@@ -25,3 +25,6 @@ bucket_name = "salad-cloud-s4-dev"
 [[kv_namespaces]]
 binding = "TOKEN_CACHE"
 id = "6390c3eceb494483be011498d892054f"
+
+[observability]
+enabled = true
